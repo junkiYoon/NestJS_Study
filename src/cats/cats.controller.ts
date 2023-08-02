@@ -11,12 +11,14 @@ import { CreateCatDto } from './dto/create-cat.dto';
 import { CatsService } from './cats.service';
 import { Cat } from './interface/cat.interface';
 import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('cats')
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Post()
+  @Roles('admin')
   async create(@Body() createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
   }
