@@ -6,19 +6,19 @@ import {
   HttpStatus,
   Param,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { CatsService } from './cats.service';
 import { Cat } from './interface/cat.interface';
 import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
-import { Roles } from 'src/common/decorators/roles.decorator';
+import { timeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 
 @Controller('cats')
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Post()
-  @Roles('admin')
   async create(@Body() createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
   }
@@ -34,6 +34,12 @@ export class CatsController {
         { cause: error },
       );
     }
+  }
+
+  @Get('/timeout')
+  @UseInterceptors(timeoutInterceptor)
+  async testTimeout() {
+    return new Promise((resolve) => setTimeout(resolve, 6000));
   }
 
   @Get(':id')
