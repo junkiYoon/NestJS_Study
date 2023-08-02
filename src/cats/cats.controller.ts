@@ -4,16 +4,15 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
-  UseFilters,
 } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { CatsService } from './cats.service';
 import { Cat } from './interface/cat.interface';
-import { HttpExceptionFilter } from 'src/common/filters/http-exception.filter';
+import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
 
 @Controller('cats')
-@UseFilters(HttpExceptionFilter)
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
@@ -33,5 +32,10 @@ export class CatsController {
         { cause: error },
       );
     }
+  }
+
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Cat> {
+    return this.catsService.findOne(id);
   }
 }
